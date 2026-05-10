@@ -225,29 +225,19 @@ body { font-family: 'Poppins', sans-serif; background: var(--blanco); color: var
 
 .info-tooltip {
   display: none;
-  position: absolute;
-  top: 26px; right: 0;
-  width: 230px;
+  position: fixed;
+  width: 240px;
   padding: 10px 13px;
   background: #fff;
   border: 1px solid #b3e0f5;
   border-radius: 8px;
   border-left: 3px solid var(--cian);
   font-size: 0.64rem; color: #1a4a6e; line-height: 1.65;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-  z-index: 10;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  z-index: 9999;
   pointer-events: none;
 }
-.info-tooltip::before {
-  content: '';
-  position: absolute; top: -6px; right: 6px;
-  width: 10px; height: 10px;
-  background: #fff;
-  border-left: 1px solid #b3e0f5;
-  border-top: 1px solid #b3e0f5;
-  transform: rotate(45deg);
-}
-.info-wrap:hover .info-tooltip { display: block; }
+.info-tooltip.visible { display: block; }
 
 .ev-links { display: flex; flex-wrap: wrap; gap: 6px; }
 .ev-link {
@@ -315,16 +305,115 @@ footer { background: var(--negro); padding: 16px 28px; }
   .header-inner { flex-wrap: wrap; min-height: auto; padding: 12px 16px; gap: 8px; }
   .header-right { margin-left: 0; }
 }
+
+/* ══ CHAT BUBBLE ══ */
+.chat-bubble {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--violeta);
+  box-shadow: 0 4px 14px rgba(167,24,120,0.3);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+  position: relative; flex-shrink: 0;
+}
+.chat-bubble:hover { transform: scale(1.08); box-shadow: 0 6px 18px rgba(167,24,120,0.4); }
+.chat-bubble-initials {
+  font-size: 0.7rem; font-weight: 800; color: #fff; letter-spacing: 0.04em; line-height: 1;
+}
+.chat-bubble-dot {
+  position: absolute; bottom: 3px; right: 3px;
+  width: 11px; height: 11px; border-radius: 50%;
+  background: #22c55e; border: 2px solid #fff;
+}
+.chat-widget {
+  position: fixed;
+  bottom: 28px; right: 28px;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+  z-index: 300;
+}
+.chat-window {
+  display: none;
+  width: 300px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+  overflow: hidden;
+  flex-direction: column;
+  animation: chatIn 0.22s ease;
+}
+.chat-window.open { display: flex; }
+@keyframes chatIn { from { opacity:0; transform:translateY(12px) scale(0.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+.chat-win-head {
+  background: var(--violeta);
+  padding: 13px 15px; display: flex; align-items: center; gap: 10px;
+}
+.chat-win-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.chat-win-info { flex: 1; }
+.chat-win-name { font-size: 0.78rem; font-weight: 700; color: #fff; }
+.chat-win-status { font-size: 0.6rem; color: rgba(255,255,255,0.75); display: flex; align-items: center; gap: 4px; }
+.chat-win-status::before { content:''; width:6px; height:6px; border-radius:50%; background:#22c55e; display:inline-block; }
+.chat-win-close {
+  background: rgba(255,255,255,0.15); border: none; color: #fff;
+  width: 26px; height: 26px; border-radius: 6px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+  transition: background 0.15s;
+}
+.chat-win-close:hover { background: rgba(255,255,255,0.3); }
+.chat-messages {
+  padding: 14px 13px; flex: 1;
+  display: flex; flex-direction: column; gap: 8px;
+  max-height: 220px; overflow-y: auto;
+  background: #f8f9fb;
+}
+.chat-msg {
+  max-width: 85%; padding: 8px 11px; border-radius: 10px;
+  font-size: 0.68rem; line-height: 1.55;
+}
+.chat-msg.from-me {
+  background: var(--violeta);
+  color: #fff; align-self: flex-start; border-bottom-left-radius: 3px;
+}
+.chat-msg.from-user {
+  background: #fff; color: var(--negro);
+  border: 1px solid var(--gris-borde);
+  align-self: flex-end; border-bottom-right-radius: 3px;
+}
+.chat-input-area {
+  padding: 10px 12px; border-top: 1px solid var(--gris-borde);
+  display: flex; gap: 7px; align-items: center; background: #fff;
+}
+.chat-input {
+  flex: 1; border: 1px solid var(--gris-borde); border-radius: 20px;
+  padding: 7px 12px; font-family: 'Poppins', sans-serif; font-size: 0.67rem;
+  outline: none; color: var(--negro); resize: none;
+  transition: border-color 0.15s;
+}
+.chat-input:focus { border-color: var(--violeta); }
+.chat-send {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  background: var(--violeta); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, transform 0.1s;
+}
+.chat-send:hover { background: #8e1265; transform: scale(1.08); }
+.chat-send svg { stroke: #fff; }
+.chat-status-msg { font-size: 0.6rem; color: var(--gris-texto); text-align: center; padding: 4px 12px 8px; background:#fff; }
+
 </style>
 </head>
 <body>
+<div id="page-wrap" style="position:relative;min-height:100vh;">
 
 <!-- ══ HEADER ══ -->
 <header class="header">
   <div class="header-inner">
 
     <div class="header-logo-zone">
-      <img src="UTEC.png" alt="UTEC" class="logo-img">
+      <img src="logo.png" alt="Mecatrónica" class="logo-img">
       <div class="header-info">
         <div class="header-nombre">Guadalupe Sosa Acosta</div>
         <div class="header-carrera">Ingeniería Mecatrónica</div>
@@ -332,12 +421,8 @@ footer { background: var(--negro); padding: 16px 28px; }
       </div>
     </div>
 
-    <div class="logo-meca-wrap">
-      <img src="logo.png" alt="Mecatrónica" class="logo-img">
-    </div>
-
     <div class="header-right">
-      <a class="btn-cv" href="https://drive.google.com/file/d/1I3l9vQux74kE1p23Swd3e4-LZdHmQavH/view?usp=sharing" target="_blank">
+      <a class="btn-cv" href="#" target="_blank">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="13" x2="12" y2="17"/><line x1="10" y1="15" x2="14" y2="15"/></svg>
         CV
       </a>
@@ -345,6 +430,13 @@ footer { background: var(--negro); padding: 16px 28px; }
 
   </div>
 </header>
+
+<!-- ══ RESUMEN / HIGHLIGHTS ══ -->
+<div style="max-width:1100px;margin:0 auto;padding:10px 28px 0;">
+  <p style="font-size:0.78rem;line-height:1.75;color:var(--gris-texto);border-left:3px solid var(--cian);padding-left:14px;">
+    Estudiante de 5.° semestre de Ingeniería Mecatrónica en UTEC ITR Suroeste. A lo largo de la carrera he integrado mecánica, electrónica y programación en proyectos reales: desde sistemas embebidos con ESP8266 y comunicación IoT hasta diseño CAD, soldadura y protocolos serie. Domino herramientas como Python, C/C++, Arduino e Inventor, y cuento con formación en inglés técnico nivel C1. Este portafolio reúne las evidencias de las cuatro competencias del perfil de egreso.
+  </p>
+</div>
 
 
 <!-- ══ MAIN ══ -->
@@ -857,10 +949,41 @@ footer { background: var(--negro); padding: 16px 28px; }
 <!-- ══ FOOTER ══ -->
 <footer>
   <div class="footer-inner">
-    <div class="footer-text">© 2025 Guadalupe Sosa Acosta · Ingeniería Mecatrónica · UTEC ITR Suroeste</div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <img src="UTEC.png" alt="UTEC" class="footer-logo">
+      <div class="footer-text">© 2025 Guadalupe Sosa Acosta · Ingeniería Mecatrónica · UTEC ITR Suroeste</div>
+    </div>
     <img src="LOGO.png" alt="Mecatrónica" class="footer-logo">
   </div>
 </footer>
+
+<!-- ══ CHAT WIDGET ══ -->
+<div class="chat-widget" id="chatWidget">
+  <div class="chat-window" id="chatWindow">
+    <div class="chat-win-head">
+      <div class="chat-win-avatar">GS</div>
+      <div class="chat-win-info">
+        <div class="chat-win-name">Guadalupe Sosa</div>
+        <div class="chat-win-status">En línea</div>
+      </div>
+      <button class="chat-win-close" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg from-me">¡Hola! Si tenés alguna consulta sobre mi portafolio o querés dejarme un comentario, escribime acá. 😊</div>
+    </div>
+    <div class="chat-input-area">
+      <input class="chat-input" id="chatInput" type="text" placeholder="Escribí tu mensaje..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+    <div class="chat-status-msg" id="chatStatus"></div>
+  </div>
+  <div class="chat-bubble" onclick="toggleChat()">
+    <div class="chat-bubble-initials">GS</div>
+    <div class="chat-bubble-dot"></div>
+  </div>
+</div>
 
 
 <script>
@@ -887,6 +1010,82 @@ document.addEventListener('keydown', e => {
 function toggleRef() {
   document.getElementById('rb').classList.toggle('open');
   document.getElementById('rc').classList.toggle('open');
+}
+
+/* Tooltips con posición fixed (se superponen al modal sin causar scroll) */
+document.querySelectorAll('.info-wrap').forEach(wrap => {
+  const tooltip = wrap.querySelector('.info-tooltip');
+  const btn = wrap.querySelector('.info-btn');
+  wrap.addEventListener('mouseenter', () => {
+    const rect = btn.getBoundingClientRect();
+    tooltip.style.top = (rect.bottom + 6) + 'px';
+    const right = window.innerWidth - rect.right;
+    tooltip.style.right = Math.max(right, 8) + 'px';
+    tooltip.style.left = 'auto';
+    // Si se sale por abajo, lo ponemos arriba
+    if (rect.bottom + 6 + 160 > window.innerHeight) {
+      tooltip.style.top = (rect.top - 10) + 'px';
+      tooltip.style.transform = 'translateY(-100%)';
+    } else {
+      tooltip.style.transform = '';
+    }
+    tooltip.classList.add('visible');
+  });
+  wrap.addEventListener('mouseleave', () => {
+    tooltip.classList.remove('visible');
+    tooltip.style.transform = '';
+  });
+});
+
+/* Chat widget — fixed bottom-right, scrolls naturally with page */
+function toggleChat() {
+  const win = document.getElementById('chatWindow');
+  win.classList.toggle('open');
+  if (win.classList.contains('open')) {
+    document.getElementById('chatInput').focus();
+  }
+}
+
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  // Mostrar el mensaje del usuario en el chat
+  const msgs = document.getElementById('chatMessages');
+  const userBubble = document.createElement('div');
+  userBubble.className = 'chat-msg from-user';
+  userBubble.textContent = msg;
+  msgs.appendChild(userBubble);
+  msgs.scrollTop = msgs.scrollHeight;
+  input.value = '';
+
+  const status = document.getElementById('chatStatus');
+  status.textContent = 'Enviando...';
+
+  // Enviar via EmailJS (servicio gratuito, sin backend)
+  // Usamos mailto como fallback garantizado
+  const subject = encodeURIComponent('Mensaje desde Portafolio – ' + new Date().toLocaleDateString('es-UY'));
+  const body = encodeURIComponent(msg);
+  const mailtoLink = 'mailto:guadalupe.sosa@estudiantes.utec.edu.uy?subject=' + subject + '&body=' + body;
+
+  // Intentar abrir cliente de correo
+  const a = document.createElement('a');
+  a.href = mailtoLink;
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  // Respuesta automática
+  setTimeout(() => {
+    const reply = document.createElement('div');
+    reply.className = 'chat-msg from-me';
+    reply.textContent = '¡Gracias por tu mensaje! Se abrió tu cliente de correo para enviarlo directamente. 📬';
+    msgs.appendChild(reply);
+    msgs.scrollTop = msgs.scrollHeight;
+    status.textContent = '';
+  }, 800);
 }
 </script>
 
